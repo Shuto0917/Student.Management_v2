@@ -4,6 +4,7 @@ import java.util.List;
 
 import jakarta.validation.constraints.Size;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -48,7 +49,7 @@ public class StudentController {
      * @return 受講生
      */
     @GetMapping("/Student/{id}")
-    public StudentDetail getStudent(@PathVariable @Size(min = 1, max = 3) String id) {
+    public StudentDetail getStudent(@PathVariable String id) {
         return service.searchStudent(id);
     }
 
@@ -74,5 +75,11 @@ public class StudentController {
     public ResponseEntity<String> updateStudent(@RequestBody StudentDetail studentDetail) {
         service.updateStudent(studentDetail);
         return ResponseEntity.ok("更新処理が成功しました。");
+    }
+
+    @GetMapping("/test")
+    public ResponseEntity<String> testException() {
+        String errorMessage = "現在のこのAPIは利用できません。URLは「studentList」ではなく「students」を利用してください。";
+        return ResponseEntity.status(HttpStatus.GONE).body(errorMessage);
     }
 }
