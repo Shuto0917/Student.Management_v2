@@ -2,6 +2,7 @@ package raisetech.student.management.controller;
 
 import java.util.List;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.constraints.Size;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -36,6 +37,7 @@ public class StudentController {
      *
      * @return　受講生詳細一覧（全件）
      */
+    @Operation(summary = "一覧検索", description = "受講生の一覧を検索します。")
     @GetMapping("/studentsList")
     public List<StudentDetail> getStudentList() {
         return service.searchStudentList();
@@ -48,6 +50,7 @@ public class StudentController {
      * @param id 受講生ID
      * @return 受講生
      */
+    @Operation(summary = "受講生ID", description = "受講生のIDで検索をします。")
     @GetMapping("/Student/{id}")
     public StudentDetail getStudent(@PathVariable String id) {
         return service.searchStudent(id);
@@ -59,6 +62,7 @@ public class StudentController {
      * @param studentDetail 受講生詳細
      * @return 実行結果
      */
+    @Operation(summary = "受講生登録", description = "受講生を登録します。")
     @PostMapping("/registerStudent")
     public ResponseEntity<StudentDetail> registerStudent(@RequestBody StudentDetail studentDetail) {
         StudentDetail responseStudentDetail = service.registerStudent(studentDetail);
@@ -71,12 +75,13 @@ public class StudentController {
      * @param studentDetail 受講生詳細
      * @return 実行結果
      */
+    @Operation(summary = "受講生更新", description = "受講生情報の更新をします。")
     @PutMapping("/updateStudent")
     public ResponseEntity<String> updateStudent(@RequestBody StudentDetail studentDetail) {
         service.updateStudent(studentDetail);
         return ResponseEntity.ok("更新処理が成功しました。");
     }
-
+    @Operation(summary = "エラーテスト", description = "テストで例外を発生させます。")
     @GetMapping("/test")
     public ResponseEntity<String> testException() {
         String errorMessage = "現在のこのAPIは利用できません。URLは「studentList」ではなく「students」を利用してください。";
