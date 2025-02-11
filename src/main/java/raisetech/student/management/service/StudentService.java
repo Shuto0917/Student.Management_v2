@@ -49,8 +49,16 @@ public class StudentService {
      */
     public StudentDetail searchStudent(String id) {
         Student student = repository.searchStudent(id);
+        if (student == null) {
+            throw new StudentNotFoundException("Student with id " + id + " not found");
+        }
         List<StudentCourse> studentsCourse = repository.searchStudentCourse(student.getId());
         return new StudentDetail(student, studentsCourse);
+    }
+    public class StudentNotFoundException extends RuntimeException {
+        public StudentNotFoundException(String message) {
+            super(message);
+        }
     }
 
     /**
