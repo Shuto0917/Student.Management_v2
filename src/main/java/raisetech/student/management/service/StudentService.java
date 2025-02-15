@@ -10,6 +10,7 @@ import raisetech.student.management.controller.converter.StudentConverter;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.domain.StudentDetail;
+import raisetech.student.management.exception.StudentNotFoundException;
 import raisetech.student.management.repository.StudentRepository;
 
 /**
@@ -54,11 +55,6 @@ public class StudentService {
         }
         List<StudentCourse> studentsCourse = repository.searchStudentCourse(student.getId());
         return new StudentDetail(student, studentsCourse);
-    }
-    public class StudentNotFoundException extends RuntimeException {
-        public StudentNotFoundException(String message) {
-            super(message);
-        }
     }
 
     /**

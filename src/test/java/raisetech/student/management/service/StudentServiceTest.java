@@ -17,6 +17,7 @@ import raisetech.student.management.repository.StudentRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import raisetech.student.management.exception.StudentNotFoundException;
 
 @ExtendWith(MockitoExtension.class)
 class StudentServiceTest {
@@ -88,7 +89,7 @@ class StudentServiceTest {
 
         when(repository.searchStudent(studentId)).thenReturn(null);
 
-        StudentService.StudentNotFoundException thrown = assertThrows(StudentService.StudentNotFoundException.class, () -> {
+        StudentNotFoundException thrown = assertThrows(StudentNotFoundException.class, () -> {
             sut.searchStudent(studentId);
         });
 
