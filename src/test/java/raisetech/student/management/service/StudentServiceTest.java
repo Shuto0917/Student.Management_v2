@@ -17,6 +17,7 @@ import raisetech.student.management.repository.StudentRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import raisetech.student.management.exception.StudentNotFoundException;
 
 @ExtendWith(MockitoExtension.class)
 class StudentServiceTest {
@@ -83,26 +84,19 @@ class StudentServiceTest {
         verify(repository, times(1)).searchStudentCourse(studentId);
     }
     @Test
-    void 受講生詳細の検索_受講生は存在するがコース情報がない場合() {
-        String studentId = "1";
+    void 受講生詳細の検索_IDに紐づく受講生が存在しない場合は例外をスローする() {
+        String studentId = "999";
 
-        Student student = new Student();
-        student.setId(studentId);
-        student.setFullName("Test User");
+        when(repository.searchStudent(studentId)).thenReturn(null);
 
-        // 学生
-        when(repository.searchStudent(studentId)).thenReturn(student);
-        when(repository.searchStudentCourse(studentId)).thenReturn(new ArrayList<>());
+        StudentNotFoundException thrown = assertThrows(StudentNotFoundException.class, () -> {
+            sut.searchStudent(studentId);
+        });
 
-        StudentDetail result = sut.searchStudent(studentId);
-
-        assertNotNull(result);
-        assertEquals(studentId, result.getStudent().getId());
-        assertEquals("Test User", result.getStudent().getFullName());
-        assertEquals(0, result.getStudentCourseList().size());
+        assertEquals("Student with id 999 not found", thrown.getMessage());
 
         verify(repository, times(1)).searchStudent(studentId);
-        verify(repository, times(1)).searchStudentCourse(studentId);
+        verify(repository, never()).searchStudentCourse(anyString());
     }
 
     @Test
