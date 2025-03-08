@@ -32,9 +32,15 @@ class StudentRepositoryTest {
         String searchId = "1";
 
         Student actual = sut.searchStudent(searchId);
-
         assertThat(actual).isNotNull();
-        assertThat(actual.getId()).isEqualTo(searchId);
+
+        Student expected = new Student(
+                "1", "田中太郎", "タナカタロウ", "タロウ",
+                "abc@example.com", "東京都", 25, "男性",
+                null, false
+        );
+
+        assertThat(actual).isEqualTo(expected);
     }
 
     @Test
@@ -61,16 +67,10 @@ class StudentRepositoryTest {
 
     @Test
     void 受講生の登録が行われること() {
-        Student student = new Student();
-        student.setFullName("江並公史");
-        student.setFurigana("エナミコウジ");
-        student.setNickname("エナミ");
-        student.setEmail("test@example.com");
-        student.setRegion("奈良県");
-        student.setAge(36);
-        student.setGender("男性");
-        student.setRemark("");
-        student.setDeleted(false);
+        Student student = new Student(
+                null, "江並公史", "エナミコウジ", "エナミ",
+                "test@example.com", "奈良県", 36, "男性", "", false
+        );
 
         sut.registerStudent(student);
 
@@ -81,26 +81,43 @@ class StudentRepositoryTest {
 
     @Test
     void 受講生コース情報の登録が行われること() {
-        StudentCourse studentCourse = new StudentCourse();
-        studentCourse.setStudentId("2");
-        studentCourse.setCourseName("Java");
-        studentCourse.setCourseStartAt(LocalDateTime.now());
-        studentCourse.setCourseEndAt(LocalDateTime.now().plusYears(1));
+        StudentCourse studentCourse = new StudentCourse(
+                "2",
+                "Java",
+                LocalDateTime.now(),
+                LocalDateTime.now().plusYears(1)
+        );
 
         sut.registerStudentCourse(studentCourse);
 
         List<StudentCourse> actual = sut.searchStudentCoursesList();
 
         assertThat(actual.size()).isEqualTo(7);
+
     }
 
     @Test
     void 受講生の更新が行えること() {
         Student actual = sut.searchStudent("1");
-        actual.setRemark("更新しました。");
-        sut.updateStudent(actual);
-        Student updateactual = sut.searchStudent("1");
-        assertThat(updateactual.getRemark()).isEqualTo("更新しました。");
+        assertThat(actual).isNotNull();
+
+        Student updatedStudent = new Student(
+                actual.getId(),
+                actual.getFullName(),
+                actual.getFurigana(),
+                actual.getNickname(),
+                actual.getEmail(),
+                actual.getRegion(),
+                actual.getAge(),
+                actual.getGender(),
+                "更新しました。",
+                actual.isDeleted()
+        );
+
+        sut.updateStudent(updatedStudent);
+
+        Student updateActual = sut.searchStudent("1");
+        assertThat(updateActual.getRemark()).isEqualTo("更新しました。");
     }
 
     @Test

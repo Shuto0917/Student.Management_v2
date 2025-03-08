@@ -9,11 +9,19 @@ import lombok.Setter;
 @Getter
 @Setter
 public class StudentCourse {
-
-    private String id;
     private String studentId;
     private String courseName;
     private LocalDateTime courseStartAt;
     private LocalDateTime courseEndAt;
+
+    public StudentCourse(String studentId, String courseName, LocalDateTime courseStartAt, LocalDateTime courseEndAt) {
+        this.studentId = studentId;
+        this.courseName = courseName;
+        this.courseStartAt = courseStartAt;
+        this.courseEndAt = courseEndAt;
+    }
+    public StudentCourse() {
+    }
 }
+
 

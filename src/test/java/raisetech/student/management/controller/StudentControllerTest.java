@@ -129,14 +129,10 @@ class StudentControllerTest {
 
     @Test
     void 受講生詳細の受講生で適切な値を入力したときに入力チェックに異常が発生しないこと() {
-        Student student = new Student();
-        student.setId("1");
-        student.setFullName("江並公史");
-        student.setFurigana("エナミコウジ");
-        student.setNickname("エナミ");
-        student.setEmail("test@example.com");
-        student.setRegion("奈良県");
-        student.setGender("男性");
+        Student student = new Student(
+                "1", "江並公史", "エナミコウジ", "エナミ",
+                "test@example.com", "奈良県", 0, "男性", null, false
+        );
 
         Set<ConstraintViolation<Student>> violations = validator.validate(student);
 
@@ -145,14 +141,10 @@ class StudentControllerTest {
 
     @Test
     void 受講生詳細の受講生でIDに数字以外を用いた時に入力チェックに掛かること() {
-        Student student = new Student();
-        student.setId("テストです。");
-        student.setFullName("江並公史");
-        student.setFurigana("エナミコウジ");
-        student.setNickname("エナミ");
-        student.setEmail("test@example.com");
-        student.setRegion("奈良県");
-        student.setGender("男性");
+        Student student = new Student(
+                "1", "江並公史", "エナミコウジ", "エナミ",
+                "test@example.com", "奈良県", 0, "男性", null, false
+        );
 
         Set<ConstraintViolation<Student>> violations = validator.validate(student);
 

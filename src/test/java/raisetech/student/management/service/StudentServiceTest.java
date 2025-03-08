@@ -59,9 +59,9 @@ class StudentServiceTest {
     @Test
     void 受講生詳細の検索_リポジトリの処理が適切に呼び出せていること() {
         String studentId = "1";
-        Student student = new Student();
-        student.setId(studentId);
-        student.setFullName("Test User");
+        Student student = new Student(
+                studentId, "Test User", null, null, null, null, 0, null, null, false
+        );
 
         List<StudentCourse> studentCourses = new ArrayList<>();
         StudentCourse course = new StudentCourse();
@@ -101,9 +101,9 @@ class StudentServiceTest {
 
     @Test
     void 受講生詳細の登録_リポジトリの処理が適切に呼び出せていること() {
-        Student student = new Student();
-        student.setId("1");
-        student.setFullName("Test User");
+        Student student = new Student(
+                "1", "Test User", null, null, null, null, 0, null, null, false
+        );
 
         StudentCourse course1 = new StudentCourse();
         course1.setCourseName("Javaコース");
@@ -137,9 +137,9 @@ class StudentServiceTest {
     }
     @Test
     void 受講生詳細の登録_受講生情報の登録に失敗した場合() {
-        Student student = new Student();
-        student.setId("1");
-        student.setFullName("Test User");
+        Student student = new Student(
+                "1", "Test User", null, null, null, null, 0, null, null, false
+        );
 
         StudentCourse course1 = new StudentCourse();
         course1.setCourseName("Javaコース");
@@ -163,7 +163,10 @@ class StudentServiceTest {
 
     @Test
     void 受講生詳細の更新＿リポジトリの処理が適切に呼び出せていること() {
-        Student student = new Student();
+        Student student = new Student(
+                "1", "Test User", null, null, null, null, 0, null, null, false
+        );
+
         StudentCourse studentsCourses = new StudentCourse();
         List<StudentCourse> studentsCoursesList = List.of(studentsCourses);
         StudentDetail studentDetail = new StudentDetail(student, studentsCoursesList);
@@ -175,9 +178,9 @@ class StudentServiceTest {
     }
     @Test
     void 受講生詳細の更新_受講生情報の更新に失敗した場合() {
-        Student student = new Student();
-        student.setId("1");
-        student.setFullName("Test User");
+        Student student = new Student(
+                "1", "Test User", null, null, null, null, 0, null, null, false
+        );
 
         StudentCourse studentsCourses = new StudentCourse();
         studentsCourses.setStudentId("1");
