@@ -40,6 +40,9 @@ class StudentRepositoryTest {
                 null, false
         );
 
+        System.out.println("Expected: " + expected);
+        System.out.println("Actual  : " + actual);
+
         assertThat(actual).isEqualTo(expected);
     }
 
@@ -111,7 +114,7 @@ class StudentRepositoryTest {
                 actual.getAge(),
                 actual.getGender(),
                 "更新しました。",
-                actual.isDeleted()
+                actual.getDeleted()
         );
 
         sut.updateStudent(updatedStudent);
@@ -129,5 +132,41 @@ class StudentRepositoryTest {
         List<StudentCourse> updateactual = sut.searchStudentCourse("1");
         StudentCourse updatestudentCourse1 = updateactual.get(0);
         assertThat(updatestudentCourse1.getCourseName()).isEqualTo("Java");
+    }
+
+    @Test
+    void 地域_年齢_性別で受講生を検索できること() {
+        String region = "東京都";
+        Integer age = 25;
+        String gender = "男性";
+
+        List<Student> students = sut.searchStudentsByCriteria(region, age, gender);
+
+        assertThat(students).hasSize(1);
+        assertThat(students.get(0).getFullName()).isEqualTo("田中太郎");
+    }
+
+    @Test
+    void 地域_年齢_性別で受講生を検索し該当する受講生がいない場合は空のリストを返す() {
+        String region = "Kyoto";
+        Integer age = 30;
+        String gender = "Male";
+
+        List<Student> students = sut.searchStudentsByCriteria(region, age, gender);
+
+        assertThat(students).isEmpty();
+    }
+
+    @Test
+    void 地域_年齢_性別で条件を部分指定して検索できること() {
+        String region = "東京都";
+        Integer age = 25;
+        String gender = "男性";
+
+        List<Student> students = sut.searchStudentsByCriteria(region, age, gender);
+
+        assertThat(students).hasSize(1);
+        assertThat(students).extracting(Student::getFullName)
+                .containsExactlyInAnyOrder("田中太郎");
     }
 }

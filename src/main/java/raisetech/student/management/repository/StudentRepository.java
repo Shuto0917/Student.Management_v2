@@ -2,11 +2,8 @@ package raisetech.student.management.repository;
 
 import java.util.List;
 
-import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Options;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.Param;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 
@@ -15,6 +12,7 @@ import raisetech.student.management.data.StudentCourse;
  */
 @Mapper
 public interface StudentRepository {
+
     /**
      * 受講生の全件検索を行います。
      *
@@ -29,6 +27,17 @@ public interface StudentRepository {
      * @return 受講生
      */
     Student searchStudent(String id);
+
+    /**
+     * 地域・年齢・性別で受講生を検索する
+     * @param region 地域
+     * @param age 年齢 (null可)
+     * @param gender 性別
+     * @return 検索結果の受講生リスト
+     */
+    List<Student> searchStudentsByCriteria(@Param("region") String region,
+                                           @Param("age") Integer age,
+                                           @Param("gender") String gender);
 
     /**
      * 受講生コース情報の全件検索を行います。
