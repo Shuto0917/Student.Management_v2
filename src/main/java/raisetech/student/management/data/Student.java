@@ -10,22 +10,23 @@ import java.util.Objects;
 @Schema(description = "受講生")
 @Getter
 @Setter
-
 public class Student {
-    private final String id;
-    private final String fullName;
-    private final String furigana;
-    private final String nickname;
-    private final String email;
-    private final String region;
-    private final int age;
-    private final String gender;
-    private final String remark;
-    private final boolean deleted;
+    private String id;
+    private String fullName;
+    private String furigana;
+    private String nickname;
+    private String email;
+    private String region;
+    private Integer age;
+    private String gender;
+    private String remark;
+    @Getter
+    private Boolean deleted;
+
 
     public Student(String id, String fullName, String furigana, String nickname,
-                   String email, String region, int age, String gender,
-                   String remark, boolean deleted) {
+                   String email, String region, Integer age, String gender,
+                   String remark, Boolean deleted) {
         this.id = id;
         this.fullName = fullName;
         this.furigana = furigana;
@@ -43,16 +44,16 @@ public class Student {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Student student = (Student) o;
-        return age == student.age &&
-                deleted == student.deleted &&
-                Objects.equals(id, student.id) &&
+        return Objects.equals(id, student.id) &&
                 Objects.equals(fullName, student.fullName) &&
                 Objects.equals(furigana, student.furigana) &&
                 Objects.equals(nickname, student.nickname) &&
                 Objects.equals(email, student.email) &&
                 Objects.equals(region, student.region) &&
+                Objects.equals(age, student.age) &&
                 Objects.equals(gender, student.gender) &&
-                Objects.equals(remark, student.remark);
+                Objects.equals(remark, student.remark) &&
+                Boolean.TRUE.equals(deleted) == Boolean.TRUE.equals(student.deleted);
     }
 
     @Override
