@@ -40,7 +40,7 @@ public class StudentController {
      * 受講生詳細の一覧検索
      */
     @Operation(summary = "一覧検索", description = "受講生の一覧を検索します。")
-    @GetMapping("/list")
+    @GetMapping("/students/list")
     public List<StudentDetail> getStudentList() {
         return studentService.searchStudentList();
     }
@@ -49,7 +49,7 @@ public class StudentController {
      * 受講生詳細の検索 (ID指定)
      */
     @Operation(summary = "受講生ID", description = "受講生のIDで検索をします。")
-    @GetMapping("/{id}")
+    @GetMapping("/students/{id}")
     public StudentDetail getStudent(@PathVariable String id) {
         return studentService.searchStudent(id);
     }
