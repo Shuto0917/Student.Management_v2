@@ -49,7 +49,7 @@ public class StudentController {
      * 受講生詳細の検索 (ID指定)
      */
     @Operation(summary = "受講生ID", description = "受講生のIDで検索をします。")
-    @GetMapping("/students/{id}")
+    @GetMapping("/student/{id}")
     public StudentDetail getStudent(@PathVariable String id) {
         return studentService.searchStudent(id);
     }
@@ -58,7 +58,7 @@ public class StudentController {
      * 受講生詳細の登録
      */
     @Operation(summary = "受講生登録", description = "受講生を登録します。")
-    @PostMapping("/register")
+    @PostMapping("/students/register")
     public ResponseEntity<StudentDetail> registerStudent(@RequestBody StudentDetail studentDetail) {
         StudentDetail responseStudentDetail = studentService.registerStudent(studentDetail);
         return ResponseEntity.ok(responseStudentDetail);
@@ -68,7 +68,7 @@ public class StudentController {
      * 受講生詳細の更新
      */
     @Operation(summary = "受講生更新", description = "受講生情報の更新をします。")
-    @PutMapping("/update")
+    @PutMapping("/students/update")
     public ResponseEntity<String> updateStudent(@RequestBody StudentDetail studentDetail) {
         studentService.updateStudent(studentDetail);
         return ResponseEntity.ok("更新処理が成功しました。");
@@ -78,7 +78,7 @@ public class StudentController {
      * 地域・年齢・性別で受講生を検索
      */
     @Operation(summary = "受講生検索", description = "地域、年齢、性別で受講生を検索します。")
-    @GetMapping("/search")
+    @GetMapping("/students/search")
     public List<Student> searchStudentsByCriteria(
             @RequestParam(required = false) String region,
             @RequestParam(required = false) Integer age,
