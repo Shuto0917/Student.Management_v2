@@ -24,12 +24,14 @@ class StudentConverterTest {
     void 受講生のリストと受講生コース情報のリストを渡して受講生詳細のリストが作成できること() {
         Student student = createStudent();
 
+
         StudentCourse studentCourse = new StudentCourse(
                 "1",
                 "1",
                 LocalDateTime.now(),
                 LocalDateTime.now().plusYears(1)
         );
+
 
         List<Student> studentList = List.of(student);
         List<StudentCourse> studentCourseList = List.of(studentCourse);
@@ -44,13 +46,14 @@ class StudentConverterTest {
     void 受講生のリストと受講生コース情報のリストを渡したときに紐づかない受講生コース情報は除外されること() {
         Student student = createStudent();
 
+
         StudentCourse studentCourse = new StudentCourse(
                 "1",
                 "2",
                 LocalDateTime.now(),
                 LocalDateTime.now().plusYears(1)
         );
-
+   
         List<Student> studentList = List.of(student);
         List<StudentCourse> studentCourseList = List.of(studentCourse);
 
