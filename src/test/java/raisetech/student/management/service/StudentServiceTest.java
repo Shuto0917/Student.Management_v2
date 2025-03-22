@@ -15,6 +15,7 @@ import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.domain.StudentDetail;
 import raisetech.student.management.repository.StudentRepository;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 import raisetech.student.management.exception.StudentNotFoundException;
@@ -59,9 +60,9 @@ class StudentServiceTest {
     @Test
     void 受講生詳細の検索_リポジトリの処理が適切に呼び出せていること() {
         String studentId = "1";
-        Student student = new Student();
-        student.setId(studentId);
-        student.setFullName("Test User");
+        Student student = new Student(
+                studentId, "Test User", null, null, null, null, 0, null, null, false
+        );
 
         List<StudentCourse> studentCourses = new ArrayList<>();
         StudentCourse course = new StudentCourse();
@@ -101,9 +102,9 @@ class StudentServiceTest {
 
     @Test
     void 受講生詳細の登録_リポジトリの処理が適切に呼び出せていること() {
-        Student student = new Student();
-        student.setId("1");
-        student.setFullName("Test User");
+        Student student = new Student(
+                "1", "Test User", null, null, null, null, 0, null, null, false
+        );
 
         StudentCourse course1 = new StudentCourse();
         course1.setCourseName("Javaコース");
@@ -137,9 +138,9 @@ class StudentServiceTest {
     }
     @Test
     void 受講生詳細の登録_受講生情報の登録に失敗した場合() {
-        Student student = new Student();
-        student.setId("1");
-        student.setFullName("Test User");
+        Student student = new Student(
+                "1", "Test User", null, null, null, null, 0, null, null, false
+        );
 
         StudentCourse course1 = new StudentCourse();
         course1.setCourseName("Javaコース");
@@ -163,7 +164,10 @@ class StudentServiceTest {
 
     @Test
     void 受講生詳細の更新＿リポジトリの処理が適切に呼び出せていること() {
-        Student student = new Student();
+        Student student = new Student(
+                "1", "Test User", null, null, null, null, 0, null, null, false
+        );
+
         StudentCourse studentsCourses = new StudentCourse();
         List<StudentCourse> studentsCoursesList = List.of(studentsCourses);
         StudentDetail studentDetail = new StudentDetail(student, studentsCoursesList);
@@ -173,11 +177,12 @@ class StudentServiceTest {
         Mockito.verify(repository, times(1)).updateStudent(student);
         Mockito.verify(repository, times(1)).updateStudentCourse(studentsCourses);
     }
+
     @Test
     void 受講生詳細の更新_受講生情報の更新に失敗した場合() {
-        Student student = new Student();
-        student.setId("1");
-        student.setFullName("Test User");
+        Student student = new Student(
+                "1", "Test User", null, null, null, null, 0, null, null, false
+        );
 
         StudentCourse studentsCourses = new StudentCourse();
         studentsCourses.setStudentId("1");
@@ -190,5 +195,65 @@ class StudentServiceTest {
 
         verify(repository, times(1)).updateStudent(student);
         verify(repository, never()).updateStudentCourse(any(StudentCourse.class));
+    }
+
+    @Test
+    void 地域_年齢_性別で受講生を検索_一致する受講生を返す() {
+        String region = "Tokyo";
+        Integer age = 25;
+        String gender = "Male";
+
+        Student student1 = new Student("1", "Test User 1", null, null, "abc@example.com", "東京都", 25, null, null, false);
+        Student student2 = new Student("2", "Test User 2", null, null, "def@example.com", "神奈川県", 19, null, null, false);
+        List<Student> expectedStudents = Arrays.asList(student1, student2);
+
+        when(repository.searchStudentsByCriteria(region, age, gender)).thenReturn(expectedStudents);
+
+        List<Student> actualStudents = sut.searchStudentsByCriteria(region, age, gender);
+
+        assertNotNull(actualStudents);
+        assertEquals(2, actualStudents.size());
+        assertEquals("Test User 1", actualStudents.get(0).getFullName());
+        assertEquals("Test User 2", actualStudents.get(1).getFullName());
+
+        verify(repository, times(1)).searchStudentsByCriteria(region, age, gender);
+    }
+
+    @Test
+    void 地域_年齢_性別で受講生を検索_一致する受講生がいない場合は空のリストを返す() {
+        String region = "Osaka";
+        Integer age = 30;
+        String gender = "Female";
+
+        when(repository.searchStudentsByCriteria(region, age, gender)).thenReturn(List.of());
+
+        List<Student> actualStudents = sut.searchStudentsByCriteria(region, age, gender);
+
+        assertNotNull(actualStudents);
+        assertTrue(actualStudents.isEmpty());
+
+        verify(repository, times(1)).searchStudentsByCriteria(region, age, gender);
+    }
+
+    @Test
+    void 地域_年齢_性別で受講生を検索_条件を部分指定した場合も検索できる() {
+        String region = null;
+        Integer age = null;
+        String gender = "Male";
+
+        Student student1 = new Student("1", "Test User 1", null, null, "abc@example.com", "東京都", 25, null, null, false);
+        Student student2 = new Student("2", "Test User 2", null, null, "def@example.com", "神奈川県", 19, null, null, false);
+        List<Student> expectedStudents = Arrays.asList(student1, student2);
+
+        when(repository.searchStudentsByCriteria(region, age, gender)).thenReturn(expectedStudents);
+
+        List<Student> actualStudents = sut.searchStudentsByCriteria(region, age, gender);
+
+        assertNotNull(actualStudents);
+        assertEquals(2, actualStudents.size());
+        assertEquals("Test User 1", actualStudents.get(0).getFullName());
+        assertEquals("Test User 2", actualStudents.get(1).getFullName());
+
+        verify(repository, times(1)).searchStudentsByCriteria(region, age, gender);
     }
 }

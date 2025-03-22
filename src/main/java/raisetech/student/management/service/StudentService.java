@@ -20,8 +20,8 @@ import raisetech.student.management.repository.StudentRepository;
 @Service
 public class StudentService {
 
-    private StudentRepository repository;
-    private StudentConverter converter;
+    private final StudentRepository repository;
+    private final StudentConverter converter;
 
     @Autowired
     public StudentService(StudentRepository repository, StudentConverter converter) {
@@ -30,10 +30,19 @@ public class StudentService {
     }
 
     /**
-     * 受講生詳細の一覧検索を行います。
-     * 　全件検索を行うので、条件指定は行いません。
+     * 地域・年齢・性別で受講生を検索する
      *
-     * @return 受講生詳細一覧(全件)
+     * @param region 地域 (null可)
+     * @param age 年齢 (null可)
+     * @param gender 性別 (null可)
+     * @return 検索条件に一致する受講生リスト
+     */
+    public List<Student> searchStudentsByCriteria(String region, Integer age, String gender) {
+        return repository.searchStudentsByCriteria(region, age, gender);
+    }
+
+    /**
+     * 受講生詳細の一覧検索を行う（全件検索）
      */
     public List<StudentDetail> searchStudentList() {
         List<Student> studentList = repository.search();
@@ -42,11 +51,7 @@ public class StudentService {
     }
 
     /**
-     * 受講生詳細検索です。
-     * IDに紐づく受講生情報を取得したあと、その受講生に紐づく受講生コース情報を取得して設定します。
-     *
-     * @param id 受講生ID
-     * @return 受講生詳細
+     * 受講生詳細検索（ID指定）
      */
     public StudentDetail searchStudent(String id) {
         Student student = repository.searchStudent(id);
@@ -58,15 +63,11 @@ public class StudentService {
     }
 
     /**
-     * 受講生詳細の登録を行います。受講生と受講生コース情報を個別に登録し、受講生コース情報には受講生情報を紐づける値とコース開始日、コース終了日を設定します。
-     *
-     * @param studentDetail 受講生詳細
-     * @return 登録情報を付与した受講生詳細
+     * 受講生の登録
      */
     @Transactional
     public StudentDetail registerStudent(StudentDetail studentDetail) {
         Student student = studentDetail.getStudent();
-
         repository.registerStudent(student);
         studentDetail.getStudentCourseList().forEach(studentCourse -> {
             initStudentsCourse(studentCourse, student);
@@ -76,23 +77,17 @@ public class StudentService {
     }
 
     /**
-     * 受講生コース情報を登録する際の初期情報を設定する。
-     *
-     * @param studentCourse 受講生コース情報
-     * @param student       受講生
+     * 受講生コース情報の初期設定
      */
     private static void initStudentsCourse(StudentCourse studentCourse, Student student) {
         LocalDateTime now = LocalDateTime.now();
-
         studentCourse.setStudentId(student.getId());
         studentCourse.setCourseStartAt(now);
         studentCourse.setCourseEndAt(now.plusYears(1));
     }
 
     /**
-     * 受講生詳細の更新を行います。 受講生と受講生コース情報をそれぞれ更新します。
-     *
-     * @param studentDetail 受講生詳細
+     * 受講生情報の更新
      */
     @Transactional
     public void updateStudent(StudentDetail studentDetail) {
@@ -101,4 +96,3 @@ public class StudentService {
                 .forEach(studentCourse -> repository.updateStudentCourse(studentCourse));
     }
 }
-

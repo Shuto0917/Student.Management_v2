@@ -20,33 +20,58 @@
 
     <!-- 受講生IDに紐づく受講生コース情報の検索 -->
     <select id="searchStudentCourse" resultType="raisetech.student.management.data.StudentCourse">
-        SELECT * FROM student_courses WHERE student_id = #{studentId}
+        SELECT * FROM student_courses WHERE student_id = #{id} <!-- 修正 -->
     </select>
 
     <!-- 受講生の新規登録 -->
     <insert id="registerStudent" parameterType="raisetech.student.management.data.Student" useGeneratedKeys="true"
             keyProperty="id">
-        INSERT INTO students(full_Name, furigana, nickname, email, region, age, gender, remark, isDeleted)
-        VALUES(#{fullName}, #{furigana}, #{nickname}, #{email}, #{region}, #{age}, #{gender}, #{remark}, false)
+        INSERT INTO students (full_name, furigana, nickname, email, region, age, gender, remark, deleted)
+        VALUES (#{fullName}, #{furigana}, #{nickname}, #{email}, #{region}, #{age}, #{gender}, #{remark}, false)
     </insert>
 
     <!-- 受講生コース情報の新規登録 -->
     <insert id="registerStudentCourse" parameterType="raisetech.student.management.data.StudentCourse"
             useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO student_courses(student_id, course_name, course_start_at, course_end_at)
-        VALUES(#{studentId}, #{courseName}, #{courseStartAt}, #{courseEndAt})
+        INSERT INTO student_courses (student_id, course_name, course_start_at, course_end_at)
+        VALUES (#{studentId}, #{courseName}, #{courseStartAt}, #{courseEndAt})
     </insert>
 
     <!-- 受講生の更新 -->
     <update id="updateStudent" parameterType="raisetech.student.management.data.Student">
-        UPDATE students SET full_name = #{fullName}, furigana = #{furigana}, nickname = #{nickname},
-        email = #{email}, region = #{region}, age = #{age}, gender = #{gender}, remark = #{remark}, isDeleted =
-        #{isDeleted} WHERE id = #{id}
+        UPDATE students
+        SET full_name = #{fullName},
+        furigana = #{furigana},
+        nickname = #{nickname},
+        email = #{email},
+        region = #{region},
+        age = #{age},
+        gender = #{gender},
+        remark = #{remark},
+        deleted = #{deleted}
+        WHERE id = #{id}
     </update>
 
     <!-- 受講生コース情報のコース名の更新 -->
     <update id="updateStudentCourse" parameterType="raisetech.student.management.data.StudentCourse">
-        UPDATE student_courses SET course_name = #{courseName} WHERE id = #{id}
+        UPDATE student_courses
+        SET course_name = #{courseName}
+        WHERE id = #{id}
     </update>
+
+    <!-- 地域・年齢・性別で受講生を検索 -->
+    <select id="searchStudentsByCriteria" parameterType="map" resultType="raisetech.student.management.data.Student">
+        SELECT * FROM students
+        WHERE 1=1
+        <if test="region != null and region.trim() != ''"> <!-- trim() で余分な空白を削除 -->
+            AND region = #{region}
+        </if>
+        <if test="age != null">
+            AND age = #{age}
+        </if>
+        <if test="gender != null and gender.trim() != ''"> <!-- trim() で余分な空白を削除 -->
+            AND gender = #{gender}
+        </if>
+    </select>
 
 </mapper>
