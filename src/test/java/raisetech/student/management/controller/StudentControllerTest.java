@@ -14,6 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 
 import raisetech.student.management.data.Student;
+import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.service.StudentService;
 
 import java.util.List;
@@ -214,4 +215,41 @@ class StudentControllerTest {
 
             verify(service, times(1)).searchStudentsByCriteria(null, null, "Male");
         }
+
+    @Test
+    void 申込状況が検索ができて結果が返ってくること() throws Exception {
+        StudentCourse course1 = StudentCourse.builder()
+                .id(1)
+                .studentId("1")
+                .courseName("Java")
+                .status("仮申込")
+                .build();
+
+        List<StudentCourse> courseList = List.of(course1);
+
+        when(service.searchCoursesByStatus("仮申込")).thenReturn(courseList);
+
+        mockMvc.perform(get("/students/courses/search")
+                        .param("status", "仮申込"))
+                .andExpect(status().isOk())
+                .andExpect(content().json("""
+                    [
+                        {"id":1,"studentId":"1","courseName":"Java","status":"仮申込"}
+                    ]
+                """));
+
+        verify(service, times(1)).searchCoursesByStatus("仮申込");
     }
+
+    @Test
+    void 存在しない申込状況を指定した場合は空のリストが返ること() throws Exception {
+        when(service.searchCoursesByStatus("仮申込")).thenReturn(List.of());
+
+        mockMvc.perform(get("/students/courses/search")
+                        .param("status", "仮申込"))
+                .andExpect(status().isOk())
+                .andExpect(content().json("[]"));
+
+        verify(service, times(1)).searchCoursesByStatus("仮申込");
+    }
+}

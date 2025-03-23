@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import raisetech.student.management.data.Student;
+import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.domain.StudentDetail;
 import raisetech.student.management.service.StudentService;
 
@@ -93,4 +94,10 @@ public class StudentController {
     public ResponseEntity<String> handleNotFoundException(NotFoundException ex) {
         return ResponseEntity.badRequest().body(ex.getMessage());
     }
+
+    @GetMapping("/courses/search")
+    public List<StudentCourse> searchByStatus(@RequestParam String status) {
+        return studentService.searchCoursesByStatus(status);
+    }
 }
+
