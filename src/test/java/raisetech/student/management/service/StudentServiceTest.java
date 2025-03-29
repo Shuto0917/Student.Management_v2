@@ -14,6 +14,8 @@ import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.domain.StudentDetail;
 import raisetech.student.management.repository.StudentRepository;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -255,5 +257,51 @@ class StudentServiceTest {
         assertEquals("Test User 2", actualStudents.get(1).getFullName());
 
         verify(repository, times(1)).searchStudentsByCriteria(region, age, gender);
+    }
+
+    @Test
+    void 申込状況で検索_一致するコースがある場合は結果を返す() {
+        String status = "仮申込";
+
+        StudentCourse course1 = new StudentCourse(
+                1, "1", "Java",
+                LocalDateTime.of(2024, 4, 1, 0, 0),
+                LocalDateTime.of(2025, 3, 31, 0, 0),
+                status
+        );
+
+        StudentCourse course2 = new StudentCourse(
+                2, "2", "Web",
+                LocalDateTime.of(2024, 7, 1, 0, 0),
+                LocalDateTime.of(2025, 6, 30, 0, 0),
+                status
+        );
+
+        List<StudentCourse> expectedCourses = List.of(course1, course2);
+
+        when(repository.searchCoursesByStatus(status)).thenReturn(expectedCourses);
+
+        List<StudentCourse> actualCourses = sut.searchCoursesByStatus(status);
+
+        assertNotNull(actualCourses);
+        assertEquals(2, actualCourses.size());
+        assertEquals("Java", actualCourses.get(0).getCourseName());
+        assertEquals("Web", actualCourses.get(1).getCourseName());
+
+        verify(repository, times(1)).searchCoursesByStatus(status);
+    }
+
+    @Test
+    void 申込状況で検索_一致するコースが存在しない場合は空のリストを返す() {
+        String status = "仮申込";
+
+        when(repository.searchCoursesByStatus(status)).thenReturn(List.of());
+
+        List<StudentCourse> actualCourses = sut.searchCoursesByStatus(status);
+
+        assertNotNull(actualCourses);
+        assertTrue(actualCourses.isEmpty());
+
+        verify(repository, times(1)).searchCoursesByStatus(status);
     }
 }

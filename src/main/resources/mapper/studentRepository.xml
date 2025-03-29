@@ -74,4 +74,9 @@
         </if>
     </select>
 
+    <!-- 受講生コース情報の申し込み状況（ステータス）の検索 -->
+    <select id="searchCoursesByStatus" parameterType="string" resultType="raisetech.student.management.data.StudentCourse">
+        SELECT * FROM student_courses WHERE status = #{status}
+    </select>
+
 </mapper>
