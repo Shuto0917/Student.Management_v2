@@ -172,7 +172,7 @@ class StudentRepositoryTest {
 
     @Test
     void 申し込み状況の検索が行えること() {
-        String status = "受講中";
+        String status = "仮申込";
 
         List<StudentCourse> result = sut.searchCoursesByStatus(status);
 
@@ -182,6 +182,6 @@ class StudentRepositoryTest {
 
         StudentCourse course = result.get(0);
         assertNotNull(course.getCourseName());
-        assertEquals("受講中", course.getStatus());
+        assertEquals("仮申込", course.getStatus());
     }
 }

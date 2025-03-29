@@ -82,10 +82,10 @@ public interface StudentRepository {
      */
     void updateStudentCourse(StudentCourse studentCourse);
 
-/**
- * 申込状況（ステータス）に基づいて受講生コース情報を検索します。
+    /**
+    * 申込状況（ステータス）に基づいて受講生コース情報を検索します。
 
- * 例：仮申込、本申込、受講中、受講終了などのステータスで検索可能。
- */
+    * 例：仮申込、本申込、受講中、受講終了などのステータスで検索可能。
+    */
     List<StudentCourse> searchCoursesByStatus(@Param("status") String status);
 }
