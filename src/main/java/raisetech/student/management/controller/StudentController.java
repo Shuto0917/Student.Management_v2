@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import raisetech.student.management.data.Student;
+import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.domain.StudentDetail;
 import raisetech.student.management.service.StudentService;
 
@@ -40,7 +41,7 @@ public class StudentController {
      * 受講生詳細の一覧検索
      */
     @Operation(summary = "一覧検索", description = "受講生の一覧を検索します。")
-    @GetMapping("/students/list")
+    @GetMapping("/list")
     public List<StudentDetail> getStudentList() {
         return studentService.searchStudentList();
     }
@@ -49,7 +50,7 @@ public class StudentController {
      * 受講生詳細の検索 (ID指定)
      */
     @Operation(summary = "受講生ID", description = "受講生のIDで検索をします。")
-    @GetMapping("/student/{id}")
+    @GetMapping("/{id}")
     public StudentDetail getStudent(@PathVariable String id) {
         return studentService.searchStudent(id);
     }
@@ -58,7 +59,7 @@ public class StudentController {
      * 受講生詳細の登録
      */
     @Operation(summary = "受講生登録", description = "受講生を登録します。")
-    @PostMapping("/students/register")
+    @PostMapping("/register")
     public ResponseEntity<StudentDetail> registerStudent(@RequestBody StudentDetail studentDetail) {
         StudentDetail responseStudentDetail = studentService.registerStudent(studentDetail);
         return ResponseEntity.ok(responseStudentDetail);
@@ -68,7 +69,7 @@ public class StudentController {
      * 受講生詳細の更新
      */
     @Operation(summary = "受講生更新", description = "受講生情報の更新をします。")
-    @PutMapping("/students/update")
+    @PutMapping("/update")
     public ResponseEntity<String> updateStudent(@RequestBody StudentDetail studentDetail) {
         studentService.updateStudent(studentDetail);
         return ResponseEntity.ok("更新処理が成功しました。");
@@ -78,7 +79,7 @@ public class StudentController {
      * 地域・年齢・性別で受講生を検索
      */
     @Operation(summary = "受講生検索", description = "地域、年齢、性別で受講生を検索します。")
-    @GetMapping("/students/search")
+    @GetMapping("/search")
     public List<Student> searchStudentsByCriteria(
             @RequestParam(required = false) String region,
             @RequestParam(required = false) Integer age,
@@ -93,4 +94,10 @@ public class StudentController {
     public ResponseEntity<String> handleNotFoundException(NotFoundException ex) {
         return ResponseEntity.badRequest().body(ex.getMessage());
     }
+
+    @GetMapping("/courses/search")
+    public List<StudentCourse> searchByStatus(@RequestParam String status) {
+        return studentService.searchCoursesByStatus(status);
+    }
 }
+

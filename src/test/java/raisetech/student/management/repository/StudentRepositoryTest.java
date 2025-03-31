@@ -169,4 +169,19 @@ class StudentRepositoryTest {
         assertThat(students).extracting(Student::getFullName)
                 .containsExactlyInAnyOrder("田中太郎");
     }
+
+    @Test
+    void 申し込み状況の検索が行えること() {
+        String status = "仮申込";
+
+        List<StudentCourse> result = sut.searchCoursesByStatus(status);
+
+        assertThat(result).isNotEmpty();
+
+        assertThat(result).allMatch(course -> status.equals(course.getStatus()));
+
+        StudentCourse course = result.get(0);
+        assertNotNull(course.getCourseName());
+        assertEquals("仮申込", course.getStatus());
+    }
 }
