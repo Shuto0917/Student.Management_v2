@@ -40,6 +40,7 @@ class StudentConverterTest {
 
         assertThat(actual.get(0).getStudent()).isEqualTo(student);
         assertThat(actual.get(0).getStudentCourseList()).isEqualTo(studentCourseList);
+        assertThat(actual.get(0).getStudentCourseList().get(0).getStudentId()).isEqualTo("1");
     }
 
     @Test
