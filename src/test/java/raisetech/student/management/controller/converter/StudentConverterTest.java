@@ -47,21 +47,22 @@ class StudentConverterTest {
     void 受講生のリストと受講生コース情報のリストを渡したときに紐づかない受講生コース情報は除外されること() {
         Student student = createStudent();
 
-
         StudentCourse studentCourse = new StudentCourse(
+                0,
                 "2",
                 "2",
                 LocalDateTime.now(),
-                LocalDateTime.now().plusYears(1)
+                LocalDateTime.now().plusYears(1),
+                null
         );
-   
+
         List<Student> studentList = List.of(student);
         List<StudentCourse> studentCourseList = List.of(studentCourse);
 
         List<StudentDetail> actual = sut.convertStudentDetails(studentList, studentCourseList);
 
         assertThat(actual.get(0).getStudent()).isEqualTo(student);
-        assertThat(actual.get(0).getStudentCourseList()).isEmpty();
+        assertThat(actual.get(0).getStudentCourseList()).isEmpty(); // 紐づかない → 空になる;
     }
 
     private static Student createStudent() {
