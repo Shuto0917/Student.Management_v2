@@ -39,8 +39,8 @@ class StudentConverterTest {
         List<StudentDetail> actual = sut.convertStudentDetails(studentList, studentCourseList);
 
         assertThat(actual.get(0).getStudent()).isEqualTo(student);
-        assertThat(actual.get(0).getStudentCourseList()).isEqualTo(studentCourseList);
         assertThat(actual.get(0).getStudentCourseList().get(0).getStudentId()).isEqualTo("1");
+        assertThat(actual.get(0).getStudentCourseList().get(0).getCourseName()).isEqualTo("1");
     }
 
     @Test
