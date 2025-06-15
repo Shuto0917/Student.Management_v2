@@ -24,14 +24,14 @@ class StudentConverterTest {
     void 受講生のリストと受講生コース情報のリストを渡して受講生詳細のリストが作成できること() {
         Student student = createStudent();
 
-
         StudentCourse studentCourse = new StudentCourse(
+                0,
                 "1",
                 "1",
                 LocalDateTime.now(),
-                LocalDateTime.now().plusYears(1)
+                LocalDateTime.now().plusYears(1),
+                null
         );
-
 
         List<Student> studentList = List.of(student);
         List<StudentCourse> studentCourseList = List.of(studentCourse);
