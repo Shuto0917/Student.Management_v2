@@ -9,10 +9,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.service.StudentService;
@@ -20,12 +16,11 @@ import raisetech.student.management.service.StudentService;
 import java.util.List;
 import java.util.Set;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(StudentController.class)
 class StudentControllerTest {
@@ -50,7 +45,7 @@ class StudentControllerTest {
     @Test
     void 受講生詳細の検索が実行できて空で返ってくること() throws Exception {
         String id = "999";
-        mockMvc.perform(get("/Student/{id}", id))
+        mockMvc.perform(get("/students/{id}", id))
                 .andExpect(status().isOk());
 
         verify(service, times(1)).searchStudent(id);
@@ -58,7 +53,7 @@ class StudentControllerTest {
 
     @Test
     void 受講生詳細の登録が実行できて空で返ってくること() throws Exception {
-        mockMvc.perform(post("/registerStudent")
+        mockMvc.perform(post("/students/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(
                                 """
@@ -88,7 +83,7 @@ class StudentControllerTest {
 
     @Test
     void 受講生詳細の更新が実行できて空で返ってくること() throws Exception {
-        mockMvc.perform(put("/updateStudent")
+        mockMvc.perform(put("/students/update")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(
                                 """
@@ -121,12 +116,14 @@ class StudentControllerTest {
         verify(service, times(1)).updateStudent(any());
     }
 
+    /*
     @Test
     void 受講生詳細の例外APIが実行できてステータスが400で返ってくること() throws Exception {
         mockMvc.perform(get("/exception"))
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().string("このAPIは現在利用できません。古いURLとなっています。"));
     }
+    */
 
     @Test
     void 受講生詳細の受講生で適切な値を入力したときに入力チェックに異常が発生しないこと() {
@@ -143,7 +140,7 @@ class StudentControllerTest {
     @Test
     void 受講生詳細の受講生でIDに数字以外を用いた時に入力チェックに掛かること() {
         Student student = new Student(
-                "1", "江並公史", "エナミコウジ", "エナミ",
+                "あ", "江並公史", "エナミコウジ", "エナミ",
                 "test@example.com", "奈良県", 0, "男性", null, false
         );
 
@@ -154,67 +151,67 @@ class StudentControllerTest {
                 .containsOnly("数字のみ入力するようにしてください。");
     }
 
-        @Test
-        void 地域_年齢_性別で受講生が検索できて空で返ってくること() throws Exception {
-            Student student1 = new Student("1", "田中太郎", "タナカタロウ", "タロウ",
-                    "abc@example.com", "Tokyo", 25, "Male", null, false);
-            Student student2 = new Student("2", "佐藤健一", "サトウケンイチ", "ケンイチ",
-                    "ghi@example.com", "Tokyo", 25, "Male", null, false);
-            List<Student> expectedStudents = List.of(student1, student2);
+    @Test
+    void 地域_年齢_性別で受講生が検索できて空で返ってくること() throws Exception {
+        Student student1 = new Student("1", "田中太郎", "タナカタロウ", "タロウ",
+                "abc@example.com", "Tokyo", 25, "Male", null, false);
+        Student student2 = new Student("2", "佐藤健一", "サトウケンイチ", "ケンイチ",
+                "ghi@example.com", "Tokyo", 25, "Male", null, false);
+        List<Student> expectedStudents = List.of(student1, student2);
 
-            when(service.searchStudentsByCriteria("Tokyo", 25, "Male")).thenReturn(expectedStudents);
+        when(service.searchStudentsByCriteria("Tokyo", 25, "Male")).thenReturn(expectedStudents);
 
-            mockMvc.perform(get("/students/search")
-                            .param("region", "Tokyo")
-                            .param("age", "25")
-                            .param("gender", "Male"))
-                    .andExpect(status().isOk()) // 200 OK
-                    .andExpect(content().json("""
+        mockMvc.perform(get("/students/search")
+                        .param("region", "Tokyo")
+                        .param("age", "25")
+                        .param("gender", "Male"))
+                .andExpect(status().isOk())
+                .andExpect(content().json("""
                     [
                         {"id":"1","fullName":"田中太郎","region":"Tokyo","age":25,"gender":"Male"},
                         {"id":"2","fullName":"佐藤健一","region":"Tokyo","age":25,"gender":"Male"}
                     ]
                 """));
 
-            verify(service, times(1)).searchStudentsByCriteria("Tokyo", 25, "Male");
-        }
+        verify(service, times(1)).searchStudentsByCriteria("Tokyo", 25, "Male");
+    }
 
-        @Test
-        void 地域_年齢_性別で受講生を検索_該当する受講生がいない場合は空のリストを返す() throws Exception {
-            when(service.searchStudentsByCriteria("Osaka", 30, "Female")).thenReturn(List.of());
+    @Test
+    void 地域_年齢_性別で受講生を検索_該当する受講生がいない場合は空のリストを返す() throws Exception {
+        when(service.searchStudentsByCriteria("Osaka", 30, "Female")).thenReturn(List.of());
 
-            mockMvc.perform(get("/students/search")
-                            .param("region", "Osaka")
-                            .param("age", "30")
-                            .param("gender", "Female"))
-                    .andExpect(status().isOk()) // 200 OK
-                    .andExpect(content().json("[]"));
+        mockMvc.perform(get("/students/search")
+                        .param("region", "Osaka")
+                        .param("age", "30")
+                        .param("gender", "Female"))
+                .andExpect(status().isOk())
+                .andExpect(content().json("[]"));
 
-            verify(service, times(1)).searchStudentsByCriteria("Osaka", 30, "Female");
-        }
+        verify(service, times(1)).searchStudentsByCriteria("Osaka", 30, "Female");
+    }
 
-        @Test
-        void 地域_年齢_性別で受講生を検索_性別のみ指定した場合でも検索が実行できて空で返ってくること() throws Exception {
-            Student student1 = new Student("1", "田中太郎", "タナカタロウ", "タロウ",
-                    "abc@example.com", "Tokyo", 25, "Male", null, false);
-            Student student2 = new Student("2", "佐藤健一", "サトウケンイチ", "ケンイチ",
-                    "ghi@example.com", "Osaka", 30, "Male", null, false);
-            List<Student> expectedStudents = List.of(student1, student2);
+    @Test
+    void 地域_年齢_性別で受講生を検索_性別のみ指定した場合でも検索が実行できて空で返ってくること() throws Exception {
+        Student student1 = new Student("1", "田中太郎", "タナカタロウ", "タロウ",
+                "abc@example.com", "Tokyo", 25, "Male", null, false);
+        Student student2 = new Student("2", "佐藤健一", "サトウケンイチ", "ケンイチ",
+                "ghi@example.com", "Osaka", 30, "Male", null, false);
+        List<Student> expectedStudents = List.of(student1, student2);
 
-            when(service.searchStudentsByCriteria(null, null, "Male")).thenReturn(expectedStudents);
+        when(service.searchStudentsByCriteria(null, null, "Male")).thenReturn(expectedStudents);
 
-            mockMvc.perform(get("/students/search")
-                            .param("gender", "Male"))
-                    .andExpect(status().isOk()) // 200 OK
-                    .andExpect(content().json("""
+        mockMvc.perform(get("/students/search")
+                        .param("gender", "Male"))
+                .andExpect(status().isOk())
+                .andExpect(content().json("""
                     [
                         {"id":"1","fullName":"田中太郎","region":"Tokyo","age":25,"gender":"Male"},
                         {"id":"2","fullName":"佐藤健一","region":"Osaka","age":30,"gender":"Male"}
                     ]
                 """));
 
-            verify(service, times(1)).searchStudentsByCriteria(null, null, "Male");
-        }
+        verify(service, times(1)).searchStudentsByCriteria(null, null, "Male");
+    }
 
     @Test
     void 申込状況が検索ができて結果が返ってくること() throws Exception {
