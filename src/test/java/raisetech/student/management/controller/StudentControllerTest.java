@@ -40,7 +40,7 @@ class StudentControllerTest {
 
     @Test
     void 受講生詳細の一覧検索が実行できて空のリストが返ってくること() throws Exception {
-        mockMvc.perform(get("/studentsList"))
+        mockMvc.perform(get("/students/studentsList"))
                 .andExpect(status().isOk())
                 .andExpect(content().json("[]"));
 

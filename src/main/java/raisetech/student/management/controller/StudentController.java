@@ -41,7 +41,7 @@ public class StudentController {
      * 受講生詳細の一覧検索
      */
     @Operation(summary = "一覧検索", description = "受講生の一覧を検索します。")
-    @GetMapping("/list")
+    @GetMapping("/studentsList")
     public List<StudentDetail> getStudentList() {
         return studentService.searchStudentList();
     }

@@ -48,7 +48,7 @@ class StudentConverterTest {
 
 
         StudentCourse studentCourse = new StudentCourse(
-                "1",
+                "2",
                 "2",
                 LocalDateTime.now(),
                 LocalDateTime.now().plusYears(1)
