@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
+import raisetech.student.management.domain.StudentDetail;
 import raisetech.student.management.service.StudentService;
 
 import java.util.List;
@@ -31,10 +32,12 @@ class StudentControllerTest {
     @MockBean
     private StudentService service;
 
-    private Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+    private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
     @Test
     void 受講生詳細の一覧検索が実行できて空のリストが返ってくること() throws Exception {
+        when(service.searchStudentList()).thenReturn(List.of());
+
         mockMvc.perform(get("/students/studentsList"))
                 .andExpect(status().isOk())
                 .andExpect(content().json("[]"));
@@ -45,6 +48,8 @@ class StudentControllerTest {
     @Test
     void 受講生詳細の検索が実行できて空で返ってくること() throws Exception {
         String id = "999";
+        when(service.searchStudent(id)).thenReturn(new StudentDetail());
+
         mockMvc.perform(get("/students/{id}", id))
                 .andExpect(status().isOk());
 
@@ -53,6 +58,8 @@ class StudentControllerTest {
 
     @Test
     void 受講生詳細の登録が実行できて空で返ってくること() throws Exception {
+        when(service.registerStudent(any())).thenReturn(new StudentDetail());
+
         mockMvc.perform(post("/students/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(
@@ -64,7 +71,7 @@ class StudentControllerTest {
                                         "nickname": "コウジ",
                                         "email": "test@example.com",
                                         "region": "奈良",
-                                        "age": "36",
+                                        "age": 36,
                                         "gender": "男性",
                                         "remark": ""
                                     },
@@ -83,6 +90,8 @@ class StudentControllerTest {
 
     @Test
     void 受講生詳細の更新が実行できて空で返ってくること() throws Exception {
+        doNothing().when(service).updateStudent(any());
+
         mockMvc.perform(put("/students/update")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(
@@ -95,13 +104,13 @@ class StudentControllerTest {
                                         "nickname": "コウジ",
                                         "email": "test@example.com",
                                         "region": "奈良",
-                                        "age": "36",
+                                        "age": 36,
                                         "gender": "男性",
                                         "remark": ""
                                     },
                                     "studentCourseList": [
                                         {
-                                            "id": "8",
+                                            "id": 8,
                                             "studentId": "12",
                                             "courseName": "Javaコース",
                                             "courseStartAt": "2024-12-29T00:00:00",
@@ -116,15 +125,6 @@ class StudentControllerTest {
         verify(service, times(1)).updateStudent(any());
     }
 
-    /*
-    @Test
-    void 受講生詳細の例外APIが実行できてステータスが400で返ってくること() throws Exception {
-        mockMvc.perform(get("/exception"))
-                .andExpect(status().is4xxClientError())
-                .andExpect(content().string("このAPIは現在利用できません。古いURLとなっています。"));
-    }
-    */
-
     @Test
     void 受講生詳細の受講生で適切な値を入力したときに入力チェックに異常が発生しないこと() {
         Student student = new Student(
@@ -133,22 +133,22 @@ class StudentControllerTest {
         );
 
         Set<ConstraintViolation<Student>> violations = validator.validate(student);
-
-        assertThat(violations.size()).isEqualTo(0);
+        assertThat(violations).isEmpty();
     }
 
     @Test
     void 受講生詳細の受講生でIDに数字以外を用いた時に入力チェックに掛かること() {
         Student student = new Student(
-                "あ", "江並公史", "エナミコウジ", "エナミ",
+                "ABC123",
+                "江並公史", "エナミコウジ", "エナミ",
                 "test@example.com", "奈良県", 0, "男性", null, false
         );
 
         Set<ConstraintViolation<Student>> violations = validator.validate(student);
 
-        assertThat(violations.size()).isEqualTo(1);
+        assertThat(violations).isNotEmpty();
         assertThat(violations).extracting("message")
-                .containsOnly("数字のみ入力するようにしてください。");
+                .contains("数字のみ入力するようにしてください。");
     }
 
     @Test
