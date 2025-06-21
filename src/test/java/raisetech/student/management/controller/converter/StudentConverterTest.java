@@ -26,10 +26,10 @@ class StudentConverterTest {
 
         StudentCourse studentCourse = new StudentCourse(
                 0,
-                "1",
-                "1",
-                LocalDateTime.now(),
-                LocalDateTime.now().plusYears(1),
+                "1",                    // studentId
+                "Java",                 // courseName
+                LocalDateTime.of(2024, 1, 1, 0, 0),
+                LocalDateTime.of(2025, 1, 1, 0, 0),
                 null
         );
 
@@ -39,8 +39,9 @@ class StudentConverterTest {
         List<StudentDetail> actual = sut.convertStudentDetails(studentList, studentCourseList);
 
         assertThat(actual.get(0).getStudent()).isEqualTo(student);
+        assertThat(actual.get(0).getStudentCourseList()).hasSize(1);
         assertThat(actual.get(0).getStudentCourseList().get(0).getStudentId()).isEqualTo("1");
-        assertThat(actual.get(0).getStudentCourseList().get(0).getCourseName()).isEqualTo("1");
+        assertThat(actual.get(0).getStudentCourseList().get(0).getCourseName()).isEqualTo("Java");
     }
 
     @Test
@@ -49,10 +50,10 @@ class StudentConverterTest {
 
         StudentCourse studentCourse = new StudentCourse(
                 0,
-                "2",
-                "2",
-                LocalDateTime.now(),
-                LocalDateTime.now().plusYears(1),
+                "2",                    // studentId 不一致
+                "Java",
+                LocalDateTime.of(2024, 1, 1, 0, 0),
+                LocalDateTime.of(2025, 1, 1, 0, 0),
                 null
         );
 
@@ -62,12 +63,11 @@ class StudentConverterTest {
         List<StudentDetail> actual = sut.convertStudentDetails(studentList, studentCourseList);
 
         assertThat(actual.get(0).getStudent()).isEqualTo(student);
-        assertThat(actual.get(0).getStudentCourseList()).isEmpty(); // 紐づかない → 空になる;
+        assertThat(actual.get(0).getStudentCourseList()).isEmpty(); // 紐づかない → 空になる
     }
 
     private static Student createStudent() {
-        Student student = new Student("1", "江並公史", "エナミコウジ", "エナミ",
+        return new Student("1", "江並公史", "エナミコウジ", "エナミ",
                 "test@example.com", "奈良県", 36, "男性", "", false);
-        return student;
     }
 }

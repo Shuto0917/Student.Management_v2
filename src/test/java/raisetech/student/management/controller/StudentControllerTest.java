@@ -153,13 +153,13 @@ class StudentControllerTest {
 
     @Test
     void 地域_年齢_性別で受講生が検索できて空で返ってくること() throws Exception {
-        Student student1 = new Student("1", "田中太郎", "タナカタロウ", "タロウ",
-                "abc@example.com", "Tokyo", 25, "Male", null, false);
-        Student student2 = new Student("2", "佐藤健一", "サトウケンイチ", "ケンイチ",
-                "ghi@example.com", "Tokyo", 25, "Male", null, false);
-        List<Student> expectedStudents = List.of(student1, student2);
-
-        when(service.searchStudentsByCriteria("Tokyo", 25, "Male")).thenReturn(expectedStudents);
+        when(service.searchStudentsByCriteria("Tokyo", 25, "Male"))
+                .thenReturn(List.of(
+                        new Student("1", "田中太郎", "タナカタロウ", "タロウ",
+                                "abc@example.com", "Tokyo", 25, "Male", null, false),
+                        new Student("2", "佐藤健一", "サトウケンイチ", "ケンイチ",
+                                "ghi@example.com", "Tokyo", 25, "Male", null, false)
+                ));
 
         mockMvc.perform(get("/students/search")
                         .param("region", "Tokyo")
@@ -192,13 +192,13 @@ class StudentControllerTest {
 
     @Test
     void 地域_年齢_性別で受講生を検索_性別のみ指定した場合でも検索が実行できて空で返ってくること() throws Exception {
-        Student student1 = new Student("1", "田中太郎", "タナカタロウ", "タロウ",
-                "abc@example.com", "Tokyo", 25, "Male", null, false);
-        Student student2 = new Student("2", "佐藤健一", "サトウケンイチ", "ケンイチ",
-                "ghi@example.com", "Osaka", 30, "Male", null, false);
-        List<Student> expectedStudents = List.of(student1, student2);
-
-        when(service.searchStudentsByCriteria(null, null, "Male")).thenReturn(expectedStudents);
+        when(service.searchStudentsByCriteria(null, null, "Male"))
+                .thenReturn(List.of(
+                        new Student("1", "田中太郎", "タナカタロウ", "タロウ",
+                                "abc@example.com", "Tokyo", 25, "Male", null, false),
+                        new Student("2", "佐藤健一", "サトウケンイチ", "ケンイチ",
+                                "ghi@example.com", "Osaka", 30, "Male", null, false)
+                ));
 
         mockMvc.perform(get("/students/search")
                         .param("gender", "Male"))
@@ -222,9 +222,7 @@ class StudentControllerTest {
                 .status("仮申込")
                 .build();
 
-        List<StudentCourse> courseList = List.of(course1);
-
-        when(service.searchCoursesByStatus("仮申込")).thenReturn(courseList);
+        when(service.searchCoursesByStatus("仮申込")).thenReturn(List.of(course1));
 
         mockMvc.perform(get("/students/courses/search")
                         .param("status", "仮申込"))
