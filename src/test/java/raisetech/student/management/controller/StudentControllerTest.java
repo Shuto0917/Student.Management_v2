@@ -15,6 +15,7 @@ import static org.mockito.ArgumentMatchers.any;
 
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
+import raisetech.student.management.domain.StudentDetail;
 import raisetech.student.management.service.StudentService;
 
 import java.util.List;
@@ -40,7 +41,9 @@ class StudentControllerTest {
 
     @Test
     void 受講生詳細の一覧検索が実行できて空のリストが返ってくること() throws Exception {
-        mockMvc.perform(get("/studentsList"))
+        when(service.searchStudentList()).thenReturn(List.of());
+
+        mockMvc.perform(get("/students/list"))
                 .andExpect(status().isOk())
                 .andExpect(content().json("[]"));
 
@@ -50,7 +53,9 @@ class StudentControllerTest {
     @Test
     void 受講生詳細の検索が実行できて空で返ってくること() throws Exception {
         String id = "999";
-        mockMvc.perform(get("/Student/{id}", id))
+        when(service.searchStudent(id)).thenReturn(new StudentDetail());
+
+        mockMvc.perform(get("/students/{id}", id))
                 .andExpect(status().isOk());
 
         verify(service, times(1)).searchStudent(id);
@@ -58,7 +63,9 @@ class StudentControllerTest {
 
     @Test
     void 受講生詳細の登録が実行できて空で返ってくること() throws Exception {
-        mockMvc.perform(post("/registerStudent")
+        when(service.registerStudent(any())).thenReturn(new StudentDetail());
+
+        mockMvc.perform(post("/students/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(
                                 """
@@ -69,7 +76,7 @@ class StudentControllerTest {
                                         "nickname": "コウジ",
                                         "email": "test@example.com",
                                         "region": "奈良",
-                                        "age": "36",
+                                        "age": 36,
                                         "gender": "男性",
                                         "remark": ""
                                     },
@@ -88,7 +95,7 @@ class StudentControllerTest {
 
     @Test
     void 受講生詳細の更新が実行できて空で返ってくること() throws Exception {
-        mockMvc.perform(put("/updateStudent")
+        mockMvc.perform(put("/students/update")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(
                                 """
@@ -100,7 +107,7 @@ class StudentControllerTest {
                                         "nickname": "コウジ",
                                         "email": "test@example.com",
                                         "region": "奈良",
-                                        "age": "36",
+                                        "age": 36,
                                         "gender": "男性",
                                         "remark": ""
                                     },
@@ -123,8 +130,8 @@ class StudentControllerTest {
 
     @Test
     void 受講生詳細の例外APIが実行できてステータスが400で返ってくること() throws Exception {
-        mockMvc.perform(get("/exception"))
-                .andExpect(status().is4xxClientError())
+        mockMvc.perform(get("/students/exception"))
+                .andExpect(status().isBadRequest())
                 .andExpect(content().string("このAPIは現在利用できません。古いURLとなっています。"));
     }
 
@@ -143,7 +150,7 @@ class StudentControllerTest {
     @Test
     void 受講生詳細の受講生でIDに数字以外を用いた時に入力チェックに掛かること() {
         Student student = new Student(
-                "1", "江並公史", "エナミコウジ", "エナミ",
+                "ABC123", "江並公史", "エナミコウジ", "エナミ",
                 "test@example.com", "奈良県", 0, "男性", null, false
         );
 

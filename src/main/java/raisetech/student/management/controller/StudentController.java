@@ -95,9 +95,19 @@ public class StudentController {
         return ResponseEntity.badRequest().body(ex.getMessage());
     }
 
+    /**
+     * コースステータス検索
+     */
     @GetMapping("/courses/search")
     public List<StudentCourse> searchByStatus(@RequestParam String status) {
         return studentService.searchCoursesByStatus(status);
     }
-}
 
+    /**
+     * 利用不可の例外用API（テスト用）
+     */
+    @GetMapping("/exception")
+    public ResponseEntity<String> exception() {
+        return ResponseEntity.badRequest().body("このAPIは現在利用できません。古いURLとなっています。");
+    }
+}

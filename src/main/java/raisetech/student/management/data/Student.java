@@ -11,7 +11,10 @@ import java.util.Objects;
 @Getter
 @Setter
 public class Student {
+
+    @Pattern(regexp = "^[0-9]+$", message = "数字のみ入力するようにしてください。")
     private String id;
+
     private String fullName;
     private String furigana;
     private String nickname;
@@ -20,9 +23,9 @@ public class Student {
     private Integer age;
     private String gender;
     private String remark;
+
     @Getter
     private Boolean deleted;
-
 
     public Student(String id, String fullName, String furigana, String nickname,
                    String email, String region, Integer age, String gender,
