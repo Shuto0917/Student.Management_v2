@@ -50,7 +50,8 @@ jobs:
           PRIVATE_KEY: ${{ secrets.AWS_EC2_PRIVATE_KEY }}
         run: |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
-          scp -o StrictHostKeyChecking=no -i private_key $SRC_PATH scripts/StudentManagement.service $EC2_USER@$EC2_HOST:/home/ec2-user/
+          # JARファイルとサービスファイルを両方転送
+          scp -o StrictHostKeyChecking=no -i private_key $SRC_PATH scripts/StudentManagement.service $EC2_USER@$EC2_HOST:~
 
       - name: SSH Application Deploy
         uses: appleboy/ssh-action@master
@@ -58,13 +59,4 @@ jobs:
           host: ${{ env.EC2_HOST }}
           username: ${{ env.EC2_USER }}
           key: ${{ secrets.AWS_EC2_PRIVATE_KEY }}
-          envs: DEST_PATH
-          script: |
-            sudo mv /home/ec2-user/StudentManagement.service /etc/systemd/system/StudentManagement.service
-            sudo systemctl daemon-reload
-
-            if sudo systemctl status StudentManagement 2>&1 | grep "Active: active (running)"; then
-              sudo systemctl restart StudentManagement
-            else
-              sudo systemctl start StudentManagement
-            fi
+        envs: DEST_PATH
