@@ -61,8 +61,6 @@ jobs:
           envs: DEST_PATH
           script: |
             sudo mv /home/ec2-user/StudentManagement.service /etc/systemd/system/StudentManagement.service
-            sudo systemctl daemon-reload
-
             if sudo systemctl status StudentManagement 2>&1 | grep "Active: active (running)"; then
               sudo systemctl restart StudentManagement
             else
